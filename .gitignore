@@ -11,6 +11,7 @@ env/
 # Environment/secrets
 .env
 *.env
+!.env.example
 
 # Test/cache
 .pytest_cache/
@@ -53,3 +54,5 @@ dist/
 # Local whisper.cpp binaries and model weights
 /deployment/windows/whisper-cpp/
 /deployment/models/
+
+/sample-data/audio/*.wav

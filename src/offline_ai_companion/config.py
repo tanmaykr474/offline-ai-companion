@@ -54,7 +54,35 @@ DATABASE_PATH = Path(
     )
 )
 
+if not DATABASE_PATH.is_absolute():
+    DATABASE_PATH = PROJECT_ROOT / DATABASE_PATH
+
 MIC_ENABLED = (
     os.getenv("MIC_ENABLED", "true").lower()
     == "true"
+)
+
+WHISPER_EXECUTABLE = PROJECT_ROOT / os.getenv(
+    "WHISPER_EXECUTABLE",
+    "deployment/windows/whisper-cpp/Release/whisper-cli.exe",
+)
+
+WHISPER_MODEL_PATH = PROJECT_ROOT / os.getenv(
+    "WHISPER_MODEL_PATH",
+    "deployment/models/ggml-tiny.en.bin",
+)
+
+WHISPER_LANGUAGE = os.getenv(
+    "WHISPER_LANGUAGE",
+    "en",
+)
+
+PIPER_EXECUTABLE = PROJECT_ROOT / os.getenv(
+    "PIPER_EXECUTABLE",
+    "deployment/windows/piper/piper.exe",
+)
+
+PIPER_MODEL_PATH = PROJECT_ROOT / os.getenv(
+    "PIPER_MODEL_PATH",
+    "deployment/models/piper/en_US-lessac-medium.onnx",
 )
