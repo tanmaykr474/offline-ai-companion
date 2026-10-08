@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment/secrets
+.env
+*.env
+
+# Test/cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Runtime data
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# Downloaded models
+models/
+*.bin
+*.onnx
+*.gguf
+*.safetensors
+
+# Audio generated during development
+*.wav
+*.mp3
+*.ogg
+
+# Python build
+build/
+dist/
+*.egg-info/
+
+# Local whisper.cpp binaries and model weights
+/deployment/windows/whisper-cpp/
+/deployment/models/
