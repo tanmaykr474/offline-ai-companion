@@ -4,6 +4,7 @@ from queue import Empty, Queue
 from threading import Event, Lock
 
 from offline_ai_companion.memory.models import Reminder
+from offline_ai_companion.core.runtime_metrics import metrics
 
 
 @dataclass(eq=False)
@@ -16,8 +17,11 @@ class ReminderNotification:
 class ReminderNotifications:
     """Coordinate reminder delivery with the main audio thread."""
 
-    def __init__(self) -> None:
-        self.pending: Queue[ReminderNotification] = Queue()
+    def __init__(self, max_pending: int = 10) -> None:
+        if not isinstance(max_pending, int) or max_pending < 1:
+            raise ValueError("Notification capacity must be positive.")
+        self.max_pending = max_pending
+        self.pending: Queue[ReminderNotification] = Queue(maxsize=max_pending)
         self.interrupt = Event()
         self.shutdown = Event()
         self._lock = Lock()
@@ -34,6 +38,9 @@ class ReminderNotifications:
                     "Notifications are shutting down."
                 )
 
+            if self.pending.qsize() + len(self._active) >= self.max_pending:
+                metrics.count("notification_rejected")
+                raise RuntimeError("Reminder notification capacity reached; delivery remains pending.")
             self.pending.put_nowait(notification)
             self.interrupt.set()
 
@@ -81,6 +88,8 @@ class ReminderNotifications:
             else:
                 notification.error = error
 
+            if notification in self._active:
+                self.pending.task_done()
             self._active.discard(notification)
             notification.finished.set()
 
@@ -101,11 +110,13 @@ class ReminderNotifications:
                     "Reminder delivery interrupted."
                 )
                 notification.finished.set()
+                self.pending.task_done()
 
             for notification in self._active:
                 notification.error = RuntimeError(
                     "Reminder delivery interrupted."
                 )
                 notification.finished.set()
+                self.pending.task_done()
 
             self._active.clear()

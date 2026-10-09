@@ -25,3 +25,4 @@ class Reminder:
     remind_at: datetime
     is_completed: bool
     created_at: str
+    revision: int = 0

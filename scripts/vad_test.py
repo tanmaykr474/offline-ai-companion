@@ -1,3 +1,4 @@
+from offline_ai_companion.core.privacy_policy import debug_text
 
 from pathlib import Path
 from threading import Event
@@ -36,7 +37,7 @@ def main() -> None:
 
         transcript = stt.transcribe(result)
 
-        print(f"\nYou said: {transcript}")
+        print(f"\nYou said: {debug_text(transcript)}")
 
     except KeyboardInterrupt:
         stop_event.set()

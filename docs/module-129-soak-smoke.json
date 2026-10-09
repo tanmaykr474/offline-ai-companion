@@ -1,0 +1,339 @@
+{
+  "scope": "synthetic_audio_models_real_orchestration_workers_sqlite",
+  "physical_devices_verified": false,
+  "cycles_completed": 2,
+  "elapsed_seconds": 7.630633299995679,
+  "rss_initial_bytes": 61001728,
+  "rss_final_bytes": 62795776,
+  "rss_sampled_peak_bytes": 62791680,
+  "python_threads_before": 1,
+  "python_threads_after": 1,
+  "retained_samples": 3,
+  "stream_opens": 22,
+  "stream_closes": 22,
+  "timings": {
+    "audio_capture": {
+      "count": 30,
+      "errors": 4,
+      "total_ms": 2140.5606999760494,
+      "max_ms": 228.04710001219064
+    },
+    "transcription": {
+      "count": 20,
+      "errors": 0,
+      "total_ms": 0.06159971235319972,
+      "max_ms": 0.007199996616691351
+    },
+    "audio_transcription": {
+      "count": 20,
+      "errors": 0,
+      "total_ms": 0.3730001044459641,
+      "max_ms": 0.05440000677481294
+    },
+    "voice_dispatch": {
+      "count": 22,
+      "errors": 0,
+      "total_ms": 4318.268799805082,
+      "max_ms": 311.8012999766506
+    },
+    "voice_response": {
+      "count": 20,
+      "errors": 0,
+      "total_ms": 4338.281899923459,
+      "max_ms": 312.63230001786724
+    },
+    "passive_extraction": {
+      "count": 2,
+      "errors": 0,
+      "total_ms": 10.680200008209795,
+      "max_ms": 5.5831000208854675
+    },
+    "memory_retrieval": {
+      "count": 8,
+      "errors": 0,
+      "total_ms": 4.916599951684475,
+      "max_ms": 1.7510000034235418
+    },
+    "audio_processing": {
+      "count": 14,
+      "errors": 0,
+      "total_ms": 66.02999987080693,
+      "max_ms": 8.537899993825704
+    },
+    "tts_generation": {
+      "count": 16,
+      "errors": 0,
+      "total_ms": 31.366000068373978,
+      "max_ms": 2.8013999690301716
+    },
+    "audio_synthesis": {
+      "count": 16,
+      "errors": 0,
+      "total_ms": 32.17569994740188,
+      "max_ms": 2.8577999910339713
+    },
+    "audio_playback": {
+      "count": 16,
+      "errors": 2,
+      "total_ms": 0.222400005441159,
+      "max_ms": 0.09680003859102726
+    },
+    "ollama_response": {
+      "count": 4,
+      "errors": 2,
+      "total_ms": 3.48319998010993,
+      "max_ms": 1.0441999766044319
+    },
+    "reminder_lateness": {
+      "count": 2,
+      "errors": 0,
+      "total_ms": 159.632,
+      "max_ms": 80.216
+    },
+    "reminder_delivery": {
+      "count": 2,
+      "errors": 0,
+      "total_ms": 628.3712999429554,
+      "max_ms": 314.43629995919764
+    }
+  },
+  "counters": {
+    "audio_dropped_blocks": 0,
+    "audio_input_overflows": 0,
+    "passive_failures": 2,
+    "passive_completed": 2,
+    "audio_recovery_attempts": 2,
+    "reminder_completed": 2
+  },
+  "owned_audio_subprocesses_after": 0,
+  "recent_samples": [
+    {
+      "counters": {},
+      "timings": {},
+      "owned_audio_subprocesses": 0,
+      "rss_bytes": 61001728,
+      "python_threads": 1,
+      "cpu_percent": 0.0,
+      "health": {}
+    },
+    {
+      "counters": {
+        "audio_dropped_blocks": 0,
+        "audio_input_overflows": 0,
+        "passive_failures": 1,
+        "passive_completed": 1,
+        "audio_recovery_attempts": 1,
+        "reminder_completed": 1
+      },
+      "timings": {
+        "audio_capture": {
+          "count": 15,
+          "errors": 2,
+          "total_ms": 1067.1523998607881,
+          "max_ms": 221.37599997222424
+        },
+        "transcription": {
+          "count": 10,
+          "errors": 0,
+          "total_ms": 0.03359973197802901,
+          "max_ms": 0.007199996616691351
+        },
+        "audio_transcription": {
+          "count": 10,
+          "errors": 0,
+          "total_ms": 0.20740000763908029,
+          "max_ms": 0.05440000677481294
+        },
+        "voice_dispatch": {
+          "count": 11,
+          "errors": 0,
+          "total_ms": 2162.515899981372,
+          "max_ms": 311.8012999766506
+        },
+        "voice_response": {
+          "count": 10,
+          "errors": 0,
+          "total_ms": 2172.3887999542058,
+          "max_ms": 312.63230001786724
+        },
+        "passive_extraction": {
+          "count": 1,
+          "errors": 0,
+          "total_ms": 5.5831000208854675,
+          "max_ms": 5.5831000208854675
+        },
+        "memory_retrieval": {
+          "count": 4,
+          "errors": 0,
+          "total_ms": 2.6279999874532223,
+          "max_ms": 1.7510000034235418
+        },
+        "audio_processing": {
+          "count": 7,
+          "errors": 0,
+          "total_ms": 35.34199990099296,
+          "max_ms": 8.537899993825704
+        },
+        "tts_generation": {
+          "count": 8,
+          "errors": 0,
+          "total_ms": 15.304300060961396,
+          "max_ms": 2.3010000004433095
+        },
+        "audio_synthesis": {
+          "count": 8,
+          "errors": 0,
+          "total_ms": 15.725399949587882,
+          "max_ms": 2.375099982600659
+        },
+        "audio_playback": {
+          "count": 8,
+          "errors": 1,
+          "total_ms": 0.12429995695129037,
+          "max_ms": 0.09680003859102726
+        },
+        "ollama_response": {
+          "count": 2,
+          "errors": 1,
+          "total_ms": 2.049999951850623,
+          "max_ms": 1.0441999766044319
+        },
+        "reminder_lateness": {
+          "count": 1,
+          "errors": 0,
+          "total_ms": 80.216,
+          "max_ms": 80.216
+        },
+        "reminder_delivery": {
+          "count": 1,
+          "errors": 0,
+          "total_ms": 313.93499998375773,
+          "max_ms": 313.93499998375773
+        }
+      },
+      "owned_audio_subprocesses": 0,
+      "rss_bytes": 62537728,
+      "python_threads": 1,
+      "cpu_percent": 18.70099396417435,
+      "health": {
+        "audio_queue_depth": 0,
+        "stop_audio_queue_depth": 0,
+        "passive_queue_depth": 0,
+        "passive_busy_seconds": 0,
+        "passive_worker_alive": 0,
+        "scheduler_alive": 0,
+        "notification_queue_depth": 0
+      }
+    },
+    {
+      "counters": {
+        "audio_dropped_blocks": 0,
+        "audio_input_overflows": 0,
+        "passive_failures": 2,
+        "passive_completed": 2,
+        "audio_recovery_attempts": 2,
+        "reminder_completed": 2
+      },
+      "timings": {
+        "audio_capture": {
+          "count": 30,
+          "errors": 4,
+          "total_ms": 2140.5606999760494,
+          "max_ms": 228.04710001219064
+        },
+        "transcription": {
+          "count": 20,
+          "errors": 0,
+          "total_ms": 0.06159971235319972,
+          "max_ms": 0.007199996616691351
+        },
+        "audio_transcription": {
+          "count": 20,
+          "errors": 0,
+          "total_ms": 0.3730001044459641,
+          "max_ms": 0.05440000677481294
+        },
+        "voice_dispatch": {
+          "count": 22,
+          "errors": 0,
+          "total_ms": 4318.268799805082,
+          "max_ms": 311.8012999766506
+        },
+        "voice_response": {
+          "count": 20,
+          "errors": 0,
+          "total_ms": 4338.281899923459,
+          "max_ms": 312.63230001786724
+        },
+        "passive_extraction": {
+          "count": 2,
+          "errors": 0,
+          "total_ms": 10.680200008209795,
+          "max_ms": 5.5831000208854675
+        },
+        "memory_retrieval": {
+          "count": 8,
+          "errors": 0,
+          "total_ms": 4.916599951684475,
+          "max_ms": 1.7510000034235418
+        },
+        "audio_processing": {
+          "count": 14,
+          "errors": 0,
+          "total_ms": 66.02999987080693,
+          "max_ms": 8.537899993825704
+        },
+        "tts_generation": {
+          "count": 16,
+          "errors": 0,
+          "total_ms": 31.366000068373978,
+          "max_ms": 2.8013999690301716
+        },
+        "audio_synthesis": {
+          "count": 16,
+          "errors": 0,
+          "total_ms": 32.17569994740188,
+          "max_ms": 2.8577999910339713
+        },
+        "audio_playback": {
+          "count": 16,
+          "errors": 2,
+          "total_ms": 0.222400005441159,
+          "max_ms": 0.09680003859102726
+        },
+        "ollama_response": {
+          "count": 4,
+          "errors": 2,
+          "total_ms": 3.48319998010993,
+          "max_ms": 1.0441999766044319
+        },
+        "reminder_lateness": {
+          "count": 2,
+          "errors": 0,
+          "total_ms": 159.632,
+          "max_ms": 80.216
+        },
+        "reminder_delivery": {
+          "count": 2,
+          "errors": 0,
+          "total_ms": 628.3712999429554,
+          "max_ms": 314.43629995919764
+        }
+      },
+      "owned_audio_subprocesses": 0,
+      "rss_bytes": 62791680,
+      "python_threads": 1,
+      "cpu_percent": 13.204040774396686,
+      "health": {
+        "audio_queue_depth": 0,
+        "stop_audio_queue_depth": 0,
+        "passive_queue_depth": 0,
+        "passive_busy_seconds": 0,
+        "passive_worker_alive": 0,
+        "scheduler_alive": 0,
+        "notification_queue_depth": 0
+      }
+    }
+  ],
+  "invariants_passed": true
+}

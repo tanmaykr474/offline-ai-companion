@@ -1,0 +1,7 @@
+# Separate ARM64 provisioning dependencies; do not use the Windows pip freeze.
+# Audio versions match the existing Windows environment. Piper is a Pi CLI adapter.
+numpy==2.5.3
+sounddevice==0.5.6
+soundfile==0.14.0
+piper-tts==1.8.0
+onnxruntime==1.31.0

@@ -1,3 +1,4 @@
+from offline_ai_companion.core.privacy_policy import debug_text
 
 from pathlib import Path
 
@@ -38,7 +39,7 @@ def main() -> None:
             print("Transcribing...")
             transcript = stt.transcribe(input_audio)
 
-            print(f"\nYou: {transcript}")
+            print(f"\nYou: {debug_text(transcript)}")
 
             if not transcript:
                 print("No speech detected.\n")
@@ -46,7 +47,7 @@ def main() -> None:
 
             try:
                 response = assistant.process(transcript)
-                print(f"\nAssistant: {response}\n")
+                print(f"\nAssistant: {debug_text(response)}\n")
 
                 print("Generating speech...")
                 tts.synthesize(response, output_audio)
@@ -59,7 +60,7 @@ def main() -> None:
                 RuntimeError,
                 FileNotFoundError,
             ) as exc:
-                print(f"Error: {exc}")
+                print(f"Error: {type(exc).__name__}")
 
     except KeyboardInterrupt:
         print("\nAssistant stopped.")

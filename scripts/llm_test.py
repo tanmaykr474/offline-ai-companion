@@ -21,7 +21,7 @@ def main() -> None:
             response = llm.generate(prompt)
             print(f"\nAssistant: {response}\n")
         except RuntimeError as exc:
-            print(f"\nError: {exc}\n")
+            print(f"\nError: {type(exc).__name__}\n")
 
 
 if __name__ == "__main__":

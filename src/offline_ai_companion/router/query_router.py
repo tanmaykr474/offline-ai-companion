@@ -1,6 +1,9 @@
 
 import re
 from dataclasses import dataclass
+from offline_ai_companion.memory.management import parse_memory_command
+from offline_ai_companion.tools.lifecycle import parse_lifecycle_command
+from offline_ai_companion.tools.online_requests import parse_online_request
 
 
 @dataclass(frozen=True)
@@ -37,6 +40,8 @@ class QueryRouter:
 
         if not text:
             raise ValueError("Query cannot be empty.")
+        if parse_memory_command(text) is not None:
+            return Route("memory_management", content=text)
 
         cleaned = text.rstrip(" .!?").strip()
 
@@ -142,6 +147,13 @@ class QueryRouter:
                         intent="add_task",
                         content=content,
                     )
+
+        if parse_lifecycle_command(text) is not None:
+            return Route("lifecycle_management", content=text)
+
+        online = parse_online_request(text)
+        if online is not None:
+            return Route(online.kind, content=text)
 
         # 7. General questions go to the LLM.
         return Route(

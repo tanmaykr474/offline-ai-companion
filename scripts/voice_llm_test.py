@@ -1,3 +1,4 @@
+from offline_ai_companion.core.privacy_policy import debug_text
 
 from pathlib import Path
 
@@ -25,7 +26,7 @@ def main() -> None:
     print("\nTranscribing speech...")
     transcript = stt.transcribe(audio_path)
 
-    print(f"\nYou: {transcript or '[No speech detected]'}")
+    print(f"\nYou: {debug_text(transcript) or '[No speech detected]'}")
 
     if not transcript:
         return
@@ -34,9 +35,9 @@ def main() -> None:
 
     try:
         response = llm.generate(transcript)
-        print(f"\nAssistant: {response}")
+        print(f"\nAssistant: {debug_text(response)}")
     except RuntimeError as exc:
-        print(f"\nError: {exc}")
+        print(f"\nError: {type(exc).__name__}")
 
 
 if __name__ == "__main__":

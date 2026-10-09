@@ -1,8 +1,11 @@
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+from uuid import uuid4
+from contextlib import nullcontext
 
 from offline_ai_companion.memory.database import Database
 from offline_ai_companion.memory.models import Note, Task, Reminder
+from offline_ai_companion.core.privacy_policy import require_safe_storage
 
 
 class MemoryRepository:
@@ -17,6 +20,7 @@ class MemoryRepository:
         value = value.strip()
         if not value:
             raise ValueError(f"{field} cannot be empty.")
+        require_safe_storage(value)
         return value
 
     @staticmethod
@@ -40,6 +44,7 @@ class MemoryRepository:
             datetime.fromisoformat(row["remind_at"]),
             bool(row["is_completed"]),
             row["created_at"],
+            row["revision"],
         )
 
     # ---------- NOTES ----------
@@ -111,21 +116,32 @@ class MemoryRepository:
             rows = db.execute(query).fetchall()
             return [self._task(row) for row in rows]
 
-    def complete_task(self, task_id: int) -> bool:
-        with self.database.connect() as db:
+    def complete_task(self, task_id: int, connection=None) -> bool:
+        with self.database.connect() if connection is None else nullcontext(connection) as db:
             result = db.execute(
-                "UPDATE tasks SET is_completed = 1 WHERE id = ?",
+                "UPDATE tasks SET revision = revision + (1 - is_completed), is_completed = 1 WHERE id = ?",
                 (task_id,),
             )
             return result.rowcount > 0
 
-    def delete_task(self, task_id: int) -> bool:
-        with self.database.connect() as db:
+    def delete_task(self, task_id: int, connection=None) -> bool:
+        with self.database.connect() if connection is None else nullcontext(connection) as db:
             result = db.execute(
                 "DELETE FROM tasks WHERE id = ?",
                 (task_id,),
             )
             return result.rowcount > 0
+
+    def get_task(self, task_id: int) -> Task | None:
+        with self.database.connect() as db:
+            row = db.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+            return self._task(row) if row else None
+
+    def rename_task(self, task_id: int, title: str, connection=None) -> bool:
+        title = self._validate(title, "Task")
+        with self.database.connect() if connection is None else nullcontext(connection) as db:
+            return db.execute("UPDATE tasks SET title = ?, revision = revision + 1 WHERE id = ?",
+                              (title, task_id)).rowcount > 0
 
     # ---------- REMINDERS ----------
 
@@ -188,27 +204,90 @@ class MemoryRepository:
         with self.database.connect() as db:
             result = db.execute(
                 """
-                UPDATE reminders SET is_completed = 1
-                WHERE id = ?
+                UPDATE reminders SET revision = revision + (1 - is_completed), is_completed = 1
+                WHERE id = ? AND delivery_token IS NULL
                 """,
                 (reminder_id,),
             )
             return result.rowcount > 0
 
-    def delete_reminder(self, reminder_id: int) -> bool:
-        with self.database.connect() as db:
+    def delete_reminder(self, reminder_id: int, connection=None) -> bool:
+        with self.database.connect() if connection is None else nullcontext(connection) as db:
             result = db.execute(
-                "DELETE FROM reminders WHERE id = ?",
+                "DELETE FROM reminders WHERE id = ? AND delivery_token IS NULL",
                 (reminder_id,),
             )
             return result.rowcount > 0
 
+    def get_reminder(self, reminder_id: int) -> Reminder | None:
+        with self.database.connect() as db:
+            row = db.execute("SELECT * FROM reminders WHERE id = ?", (reminder_id,)).fetchone()
+            return self._reminder(row) if row else None
+
+    def reschedule_reminder(self, reminder_id: int, when: datetime, connection=None) -> bool:
+        if when.tzinfo is None or when.utcoffset() is None:
+            raise ValueError("Reminder time must include a timezone.")
+        with self.database.connect() if connection is None else nullcontext(connection) as db:
+            return db.execute("""UPDATE reminders SET remind_at = ?, is_completed = 0,
+                revision = revision + 1 WHERE id = ? AND delivery_token IS NULL""",
+                (when.astimezone(timezone.utc).isoformat(), reminder_id)).rowcount > 0
+
+    def cancel_reminder(self, reminder_id: int, connection=None) -> bool:
+        with self.database.connect() if connection is None else nullcontext(connection) as db:
+            return db.execute("""UPDATE reminders SET is_completed = 1,
+                revision = revision + (1 - is_completed)
+                WHERE id = ? AND delivery_token IS NULL""", (reminder_id,)).rowcount > 0
+
+    def claim_reminder(self, reminder: Reminder, now: datetime, lease_seconds: int = 300) -> str | None:
+        """Atomically claim this exact due version across scheduler instances."""
+        if now.tzinfo is None or now.utcoffset() is None or lease_seconds <= 0:
+            raise ValueError("A timezone-aware clock and positive delivery lease are required.")
+        now = now.astimezone(timezone.utc)
+        token = uuid4().hex
+        with self.database.connect() as db:
+            changed = db.execute("""UPDATE reminders SET delivery_token = ?, delivery_until = ?,
+                revision = revision + 1 WHERE id = ? AND is_completed = 0
+                AND message = ? AND remind_at = ? AND revision = ? AND remind_at <= ?
+                AND (delivery_token IS NULL OR delivery_until <= ?)""",
+                (token, (now + timedelta(seconds=lease_seconds)).isoformat(), reminder.id,
+                 reminder.message, reminder.remind_at.astimezone(timezone.utc).isoformat(),
+                 reminder.revision, now.isoformat(), now.isoformat())).rowcount
+            return token if changed else None
+
+    def renew_reminder_delivery(self, reminder_id: int, token: str, now: datetime,
+                               lease_seconds: int = 300) -> bool:
+        if now.tzinfo is None or now.utcoffset() is None or lease_seconds <= 0:
+            raise ValueError("A timezone-aware clock and positive delivery lease are required.")
+        with self.database.connect() as db:
+            return db.execute("UPDATE reminders SET delivery_until = ? WHERE id = ? AND delivery_token = ?",
+                ((now.astimezone(timezone.utc) + timedelta(seconds=lease_seconds)).isoformat(),
+                 reminder_id, token)).rowcount > 0
+
+    def defer_interrupted_reminder(self, reminder_id: int, token: str, now: datetime) -> bool:
+        """Defer only the still-owned delivery; interrupted speech is not delivery."""
+        if now.tzinfo is None or now.utcoffset() is None:
+            raise ValueError("Reminder clock must be timezone-aware.")
+        due = now.astimezone(timezone.utc) + timedelta(seconds=60)
+        with self.database.connect() as db:
+            return db.execute("""UPDATE reminders SET remind_at = ?, is_completed = 0,
+                delivery_token = NULL, delivery_until = NULL, revision = revision + 1
+                WHERE id = ? AND delivery_token = ?""",
+                (due.isoformat(), reminder_id, token)).rowcount > 0
+
+    def finish_reminder_delivery(self, reminder_id: int, token: str, success: bool) -> bool:
+        with self.database.connect() as db:
+            return db.execute("""UPDATE reminders SET is_completed = ?, delivery_token = NULL,
+                delivery_until = NULL, revision = revision + 1
+                WHERE id = ? AND delivery_token = ?""",
+                (int(success), reminder_id, token)).rowcount > 0
+
     
-    def set_fact(self, key: str, value: str) -> None:
+    def set_fact(self, key: str, value: str, connection=None) -> None:
         key = self._validate(key, "Fact key")
         value = self._validate(value, "Fact value")
+        require_safe_storage(key + ": " + value)
 
-        with self.database.connect() as db:
+        with self.database.connect() if connection is None else nullcontext(connection) as db:
             db.execute(
                 """
                 INSERT INTO facts (key, value)
@@ -220,8 +299,18 @@ class MemoryRepository:
                 (key, value),
             )
 
-    def get_fact(self, key: str) -> str | None:
+    def delete_fact(self, key: str, connection=None) -> bool:
+        with self.database.connect() if connection is None else nullcontext(connection) as db:
+            return db.execute("DELETE FROM facts WHERE key = ?", (key,)).rowcount > 0
+
+    def clear_facts(self, connection=None) -> int:
+        with self.database.connect() if connection is None else nullcontext(connection) as db:
+            return db.execute("DELETE FROM facts").rowcount
+
+    def get_fact(self, key: str, *, recall_budget=False) -> str | None:
         with self.database.connect() as db:
+            if recall_budget:
+                db.execute("PRAGMA busy_timeout = 50")
             row = db.execute(
                 "SELECT value FROM facts WHERE key = ?",
                 (key,),

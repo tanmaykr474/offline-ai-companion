@@ -3,15 +3,22 @@ from datetime import datetime, timedelta, timezone
 
 from offline_ai_companion.memory.repository import MemoryRepository
 from offline_ai_companion.router.query_router import Route
+from offline_ai_companion.core.privacy_policy import contains_secret, STORAGE_REFUSAL, model_text
+from offline_ai_companion.config import REMINDER_TIMEZONE
+from offline_ai_companion.scheduler.reminder_time import local_timezone
 
 
 class MemoryTools:
     """Execute validated memory operations."""
 
-    def __init__(self, repository: MemoryRepository):
+    def __init__(self, repository: MemoryRepository, clock=None, timezone_name=None):
         self.repository = repository
+        self.clock = clock or (lambda: datetime.now(timezone.utc))
+        self.reminder_zone = local_timezone(timezone_name or REMINDER_TIMEZONE)
 
     def execute(self, route: Route) -> str:
+        if contains_secret(route.content):
+            return STORAGE_REFUSAL
         if route.intent == "set_name":
             self.repository.set_fact("user.name", route.content)
             return f"I'll call you {route.content}."
@@ -26,7 +33,7 @@ class MemoryTools:
                 return "You have no saved notes."
 
             return "Your notes:\n" + "\n".join(
-                f"{note.id}. {note.content}"
+                f"{note.id}. {model_text(note.content)}"
                 for note in notes
             )
 
@@ -42,7 +49,7 @@ class MemoryTools:
                 return "You have no pending tasks."
 
             return "Your pending tasks:\n" + "\n".join(
-                f"{task.id}. {task.title}"
+                f"{task.id}. {model_text(task.title)}"
                 for task in tasks
             )
 
@@ -52,9 +59,7 @@ class MemoryTools:
                     "Reminder delay must be greater than zero."
                 )
 
-            remind_at = datetime.now(
-                timezone.utc
-            ) + timedelta(minutes=route.minutes)
+            remind_at = self.clock() + timedelta(minutes=route.minutes)
 
             reminder = self.repository.add_reminder(
                 route.content,
@@ -73,8 +78,8 @@ class MemoryTools:
                 return "You have no reminders."
 
             return "Your reminders:\n" + "\n".join(
-                f"{reminder.id}. {reminder.message} — "
-                f"{reminder.remind_at.astimezone().strftime('%Y-%m-%d %I:%M %p')}"
+                f"{reminder.id}. {model_text(reminder.message)} — "
+                f"{reminder.remind_at.astimezone(self.reminder_zone).strftime('%Y-%m-%d %I:%M %p')}"
                 f" ({'completed' if reminder.is_completed else 'pending'})"
                 for reminder in reminders
             )

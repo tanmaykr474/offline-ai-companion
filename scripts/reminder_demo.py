@@ -19,7 +19,7 @@ def main():
     delivered = Event()
 
     def announce(reminder):
-        print(f"[REMINDER] {reminder.message}")
+        print("[REMINDER] Delivering demo notification.")
 
         output = Path(
             "sample-data/audio/reminder_demo.wav"

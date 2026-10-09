@@ -4,6 +4,7 @@ import re
 from dataclasses import dataclass
 
 from offline_ai_companion.llm.ollama import OllamaLLM
+from offline_ai_companion.core.privacy_policy import allows_storage
 
 
 @dataclass(frozen=True)
@@ -37,6 +38,8 @@ class IntelligentFactExtractor:
         message = message.strip()
 
         if not message or len(message) > self.MAX_INPUT_LENGTH:
+            return None
+        if not allows_storage(message):
             return None
 
         prompt = f"""You extract personal facts from user messages.
@@ -106,6 +109,8 @@ JSON:"""
             return None
 
         if not value or len(value) > self.MAX_VALUE_LENGTH:
+            return None
+        if not allows_storage(key + ": " + value + " " + evidence):
             return None
 
         if not evidence or evidence not in message:

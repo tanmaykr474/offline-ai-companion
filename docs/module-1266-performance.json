@@ -1,0 +1,80 @@
+{
+  "synthetic_data_only": true,
+  "physical_devices_verified": false,
+  "scope": "Real SQLite/extraction/retrieval; optional local audio models; no playback",
+  "iterations": 20,
+  "local_audio": [
+    {
+      "scenario": 1,
+      "passive_saved": true,
+      "matched": true
+    },
+    {
+      "scenario": 2,
+      "passive_saved": true,
+      "matched": true
+    },
+    {
+      "scenario": 3,
+      "passive_saved": true,
+      "matched": true
+    },
+    {
+      "scenario": 4,
+      "passive_saved": true,
+      "matched": true
+    },
+    {
+      "scenario": 5,
+      "passive_saved": true,
+      "matched": true
+    }
+  ],
+  "ollama": "local generation completed",
+  "stored_observations": 5,
+  "audio_stored_observations": 5,
+  "stages": {
+    "passive_extraction": {
+      "count": 110,
+      "median_ms": 7.848,
+      "p95_ms": 10.212,
+      "max_ms": 49.991,
+      "raised_errors": 0
+    },
+    "memory_retrieval": {
+      "count": 105,
+      "median_ms": 2.959,
+      "p95_ms": 4.838,
+      "max_ms": 5.104,
+      "raised_errors": 0
+    },
+    "tts_generation": {
+      "count": 15,
+      "median_ms": 871.319,
+      "p95_ms": 1968.337,
+      "max_ms": 1968.337,
+      "raised_errors": 0
+    },
+    "transcription": {
+      "count": 10,
+      "median_ms": 1133.163,
+      "p95_ms": 1278.519,
+      "max_ms": 1278.519,
+      "raised_errors": 0
+    },
+    "voice_response": {
+      "count": 5,
+      "median_ms": 2481.135,
+      "p95_ms": 3132.096,
+      "max_ms": 3132.096,
+      "raised_errors": 0
+    },
+    "ollama_response": {
+      "count": 1,
+      "median_ms": 2738.603,
+      "p95_ms": 2738.603,
+      "max_ms": 2738.603,
+      "raised_errors": 0
+    }
+  }
+}

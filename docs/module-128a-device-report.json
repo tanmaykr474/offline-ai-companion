@@ -1,0 +1,326 @@
+{
+  "scope": "metadata_and_format_checks_only_not_physical_validation",
+  "platform": "Windows",
+  "python": "3.13.14",
+  "inventory": {
+    "status": "ok",
+    "devices": [
+      {
+        "id": 0,
+        "hostapi": 0,
+        "input_channels": 2,
+        "output_channels": 0,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 1,
+        "hostapi": 0,
+        "input_channels": 3,
+        "output_channels": 0,
+        "default_samplerate": 44100.0,
+        "default_input": true,
+        "default_output": false
+      },
+      {
+        "id": 2,
+        "hostapi": 0,
+        "input_channels": 3,
+        "output_channels": 0,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 3,
+        "hostapi": 0,
+        "input_channels": 0,
+        "output_channels": 2,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 4,
+        "hostapi": 0,
+        "input_channels": 0,
+        "output_channels": 2,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": true
+      },
+      {
+        "id": 5,
+        "hostapi": 1,
+        "input_channels": 2,
+        "output_channels": 0,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 6,
+        "hostapi": 1,
+        "input_channels": 3,
+        "output_channels": 0,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 7,
+        "hostapi": 1,
+        "input_channels": 3,
+        "output_channels": 0,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 8,
+        "hostapi": 1,
+        "input_channels": 0,
+        "output_channels": 2,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 9,
+        "hostapi": 1,
+        "input_channels": 0,
+        "output_channels": 2,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 10,
+        "hostapi": 2,
+        "input_channels": 0,
+        "output_channels": 2,
+        "default_samplerate": 48000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 11,
+        "hostapi": 2,
+        "input_channels": 2,
+        "output_channels": 0,
+        "default_samplerate": 48000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 12,
+        "hostapi": 2,
+        "input_channels": 2,
+        "output_channels": 0,
+        "default_samplerate": 48000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 13,
+        "hostapi": 3,
+        "input_channels": 0,
+        "output_channels": 1,
+        "default_samplerate": 16000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 14,
+        "hostapi": 3,
+        "input_channels": 1,
+        "output_channels": 0,
+        "default_samplerate": 16000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 15,
+        "hostapi": 3,
+        "input_channels": 0,
+        "output_channels": 2,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 16,
+        "hostapi": 3,
+        "input_channels": 0,
+        "output_channels": 2,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 17,
+        "hostapi": 3,
+        "input_channels": 2,
+        "output_channels": 0,
+        "default_samplerate": 48000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 18,
+        "hostapi": 3,
+        "input_channels": 2,
+        "output_channels": 0,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 19,
+        "hostapi": 3,
+        "input_channels": 0,
+        "output_channels": 2,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 20,
+        "hostapi": 3,
+        "input_channels": 0,
+        "output_channels": 2,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 21,
+        "hostapi": 3,
+        "input_channels": 2,
+        "output_channels": 0,
+        "default_samplerate": 48000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 22,
+        "hostapi": 3,
+        "input_channels": 2,
+        "output_channels": 0,
+        "default_samplerate": 48000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 23,
+        "hostapi": 3,
+        "input_channels": 0,
+        "output_channels": 1,
+        "default_samplerate": 8000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 24,
+        "hostapi": 3,
+        "input_channels": 1,
+        "output_channels": 0,
+        "default_samplerate": 8000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 25,
+        "hostapi": 3,
+        "input_channels": 0,
+        "output_channels": 2,
+        "default_samplerate": 48000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 26,
+        "hostapi": 3,
+        "input_channels": 0,
+        "output_channels": 2,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 27,
+        "hostapi": 3,
+        "input_channels": 1,
+        "output_channels": 0,
+        "default_samplerate": 48000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 28,
+        "hostapi": 3,
+        "input_channels": 3,
+        "output_channels": 0,
+        "default_samplerate": 16000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 29,
+        "hostapi": 3,
+        "input_channels": 3,
+        "output_channels": 0,
+        "default_samplerate": 16000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 30,
+        "hostapi": 3,
+        "input_channels": 1,
+        "output_channels": 0,
+        "default_samplerate": 44100.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 31,
+        "hostapi": 3,
+        "input_channels": 3,
+        "output_channels": 0,
+        "default_samplerate": 16000.0,
+        "default_input": false,
+        "default_output": false
+      },
+      {
+        "id": 32,
+        "hostapi": 3,
+        "input_channels": 3,
+        "output_channels": 0,
+        "default_samplerate": 16000.0,
+        "default_input": false,
+        "default_output": false
+      }
+    ]
+  },
+  "input_device": null,
+  "output_device": null,
+  "input_format": {
+    "status": "ok",
+    "sample_rate": 16000,
+    "channels": 1
+  },
+  "output_format": {
+    "status": "ok",
+    "sample_rate": 22050,
+    "channels": 1
+  },
+  "local_files": {
+    "whisper_executable": true,
+    "whisper_model": true,
+    "piper_executable": true,
+    "piper_model": true,
+    "piper_model_config": true
+  }
+}

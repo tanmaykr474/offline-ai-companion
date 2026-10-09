@@ -1,3 +1,4 @@
+from offline_ai_companion.core.privacy_policy import debug_text
 
 from pathlib import Path
 
@@ -23,7 +24,7 @@ def main() -> None:
     transcript = stt.transcribe(audio_path)
 
     print("\nYou said:")
-    print(transcript or "[No speech detected]")
+    print(debug_text(transcript) or "[No speech detected]")
 
 
 if __name__ == "__main__":

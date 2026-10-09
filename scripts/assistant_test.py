@@ -44,7 +44,7 @@ def main() -> None:
             RuntimeError,
             FileNotFoundError,
         ) as exc:
-            print(f"\nError: {exc}\n")
+            print(f"\nError: {type(exc).__name__}\n")
 
 
 if __name__ == "__main__":

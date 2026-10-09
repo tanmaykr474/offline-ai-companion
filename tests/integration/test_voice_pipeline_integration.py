@@ -67,8 +67,9 @@ def stop_after_recording(app, result=None):
     app.recorder.record_utterance.side_effect = record
 
 
+
 def test_successful_voice_pipeline(app):
-    """Verify STT -> Assistant -> TTS -> playback."""
+    """Verify wake -> STT -> Assistant -> TTS -> playback."""
 
     audio_path = Path("recorded.wav")
 
@@ -77,20 +78,31 @@ def test_successful_voice_pipeline(app):
         return audio_path
 
     app.recorder.record_utterance.side_effect = record
-    app.stt.transcribe.return_value = "Hello companion"
-    app.assistant.process.return_value = "Hello there"
+
+    app.stt.transcribe.return_value = (
+        "Nova, hello companion"
+    )
+
+    app.assistant.process.return_value = (
+        "Hello there"
+    )
 
     with patch("always_on_assistant.time.sleep"):
         app.run()
 
-    app.stt.transcribe.assert_called_once_with(audio_path)
-    app.assistant.process.assert_called_once_with(
-        "Hello companion"
+    app.stt.transcribe.assert_called_once_with(
+        audio_path
     )
+
+    app.assistant.process.assert_called_once_with(
+        "hello companion"
+    )
+
     app.tts.synthesize.assert_called_once_with(
         "Hello there",
         app.output_path,
     )
+
     app.player.play.assert_called_once_with(
         app.output_path
     )
@@ -176,11 +188,21 @@ def test_piper_failure_is_handled(app):
     app.scheduler.stop.assert_called_once_with(timeout=5.0)
 
 
-def test_speaker_failure_is_handled(app):
-    stop_after_recording(app, Path("recorded.wav"))
 
-    app.stt.transcribe.return_value = "Hello"
-    app.assistant.process.return_value = "Hello back"
+def test_speaker_failure_is_handled(app):
+    stop_after_recording(
+        app,
+        Path("recorded.wav"),
+    )
+
+    app.stt.transcribe.return_value = (
+        "Nova, hello"
+    )
+
+    app.assistant.process.return_value = (
+        "Hello back"
+    )
+
     app.player.play.side_effect = RuntimeError(
         "Speaker disconnected"
     )
@@ -188,9 +210,21 @@ def test_speaker_failure_is_handled(app):
     with patch("always_on_assistant.time.sleep"):
         app.run()
 
-    app.tts.synthesize.assert_called_once()
-    app.player.play.assert_called_once()
-    app.scheduler.stop.assert_called_once_with(timeout=5.0)
+    app.assistant.process.assert_called_once_with(
+        "hello"
+    )
+
+    app.tts.synthesize.assert_called_once_with(
+        "Hello back",
+        app.output_path,
+    )
+
+    app.player.play.assert_called_once_with(
+        app.output_path
+    )
+
+    # Playback failure must not crash the assistant.
+    assert app.stop_event.is_set()
 
 
 def test_recorder_receives_shutdown_and_interrupt_events(app):
@@ -238,4 +272,16 @@ def test_keyboard_interrupt_stops_application(app):
     app.notifications.close.assert_called_once()
     app.scheduler.stop.assert_called_once_with(timeout=5.0)
     assert app.stop_event.is_set()
+
+
+def test_shutdown_waits_for_passive_drain_before_reporting_stopped(app, capsys):
+    stop_after_recording(app)
+    worker = Mock()
+    worker.stop.side_effect = [False, False, True]
+    app.passive_worker = worker
+    app.run()
+    assert worker.stop.call_count == 3
+    output = capsys.readouterr().out
+    assert "Finishing accepted background speech" in output
+    assert output.index("Finishing accepted background speech") < output.index("Nova stopped.")
 

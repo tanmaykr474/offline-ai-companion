@@ -1,3 +1,4 @@
+from offline_ai_companion.core.privacy_policy import debug_text
 
 from pathlib import Path
 
@@ -28,7 +29,7 @@ def main() -> None:
             )
 
             transcript = stt.transcribe(audio_path)
-            print(f"\nYou: {transcript}")
+            print(f"\nYou: {debug_text(transcript)}")
 
             if not transcript:
                 print("No speech detected.\n")
@@ -36,9 +37,9 @@ def main() -> None:
 
             try:
                 response = assistant.process(transcript)
-                print(f"Assistant: {response}\n")
+                print(f"Assistant: {debug_text(response)}\n")
             except (ValueError, RuntimeError) as exc:
-                print(f"Error: {exc}\n")
+                print(f"Error: {type(exc).__name__}\n")
 
     except KeyboardInterrupt:
         print("\nAssistant stopped.")
