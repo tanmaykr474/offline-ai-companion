@@ -52,6 +52,7 @@ class PiperTTS:
         ]
 
         try:
+            output_path.unlink(missing_ok=True)
             subprocess.run(
                 command,
                 input=text.strip() + "\n",
@@ -68,6 +69,10 @@ class PiperTTS:
         except subprocess.CalledProcessError as exc:
             raise RuntimeError(
                 f"Piper speech synthesis failed: {exc.stderr}"
+            ) from exc
+        except OSError as exc:
+            raise RuntimeError(
+                f"Cannot start Piper executable: {exc}"
             ) from exc
 
         if not output_path.is_file():

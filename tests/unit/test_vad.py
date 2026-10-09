@@ -42,3 +42,26 @@ def test_handles_empty_audio():
 def test_rejects_invalid_threshold():
     with pytest.raises(ValueError):
         VoiceActivityDetector(threshold=0)
+
+
+def test_rms_returns_zero_for_empty_audio():
+    assert VoiceActivityDetector.rms(
+        np.array([], dtype=np.float32)
+    ) == 0.0
+
+
+def test_rms_calculates_signal_energy():
+    audio = np.full(1600, 0.1, dtype=np.float32)
+
+    assert VoiceActivityDetector.rms(audio) == pytest.approx(
+        0.1,
+        abs=1e-6,
+    )
+
+
+def test_rejects_nonfinite_threshold():
+    with pytest.raises(ValueError):
+        VoiceActivityDetector(threshold=float("nan"))
+
+    with pytest.raises(ValueError):
+        VoiceActivityDetector(threshold=float("inf"))

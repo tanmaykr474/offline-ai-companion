@@ -70,5 +70,9 @@ class WhisperSTT:
             raise RuntimeError(
                 f"Whisper transcription failed: {exc.stderr}"
             ) from exc
+        except OSError as exc:
+            raise RuntimeError(
+                f"Cannot start Whisper executable: {exc}"
+            ) from exc
 
         return result.stdout.strip()

@@ -6,7 +6,7 @@ import soundfile as sf
 
 
 class AudioPlayer:
-    """Play WAV audio through the default speaker."""
+    """Play WAV audio with controlled error handling."""
 
     def play(self, audio_path: str | Path) -> None:
         path = Path(audio_path)
@@ -16,10 +16,15 @@ class AudioPlayer:
                 f"Audio file not found: {path}"
             )
 
-        audio, sample_rate = sf.read(
-            path,
-            dtype="float32",
-        )
+        try:
+            audio, sample_rate = sf.read(
+                path,
+                dtype="float32",
+            )
+        except (OSError, RuntimeError) as exc:
+            raise RuntimeError(
+                f"Cannot read audio file: {exc}"
+            ) from exc
 
         try:
             sd.play(
@@ -27,5 +32,11 @@ class AudioPlayer:
                 samplerate=sample_rate,
             )
             sd.wait()
+
+        except (sd.PortAudioError, OSError) as exc:
+            raise RuntimeError(
+                f"Audio playback failed: {exc}"
+            ) from exc
+
         finally:
             sd.stop()
