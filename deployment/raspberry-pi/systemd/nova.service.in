@@ -1,0 +1,31 @@
+[Unit]
+Description=Nova offline voice companion
+After=local-fs.target sound.target nova-ollama.service
+Wants=sound.target nova-ollama.service
+StartLimitIntervalSec=300
+StartLimitBurst=3
+
+[Service]
+Type=exec
+User=@USER@
+SupplementaryGroups=audio gpio
+WorkingDirectory=@ROOT@
+UMask=0077
+Environment=PYTHONUNBUFFERED=1
+Environment=NOVA_HEADLESS=true
+ExecStart=@ROOT@/.venv/bin/python -u -m offline_ai_companion.core.pi_deployment --start --headless --env-file @ROOT@/deployment/raspberry-pi/nova.env
+Restart=on-failure
+RestartSec=10
+RestartPreventExitStatus=78
+KillSignal=SIGTERM
+KillMode=mixed
+# Preserve accepted-work draining. An operator must diagnose a stuck shutdown.
+TimeoutStopSec=infinity
+NoNewPrivileges=true
+ProtectSystem=full
+StandardInput=null
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

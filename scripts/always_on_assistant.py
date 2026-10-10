@@ -236,16 +236,23 @@ class AlwaysOnAssistant:
     def set_muted(self, muted: bool) -> None:
         with self.privacy.lock:
             if self.privacy.set_muted(muted):
-                self.activation_controller.reset()
-                shutting_down = self.interruption_enabled and (
-                    self.__dict__.get("_closed", False)
-                    or self.__dict__.get("state") == AssistantState.SHUTTING_DOWN
-                )
-                if not shutting_down:
-                    self.set_state(AssistantState.MUTED if muted else AssistantState.IDLE)
-                print("[PRIVACY] Software microphone mute: " + ("ON" if muted else "OFF"), flush=True)
-                if muted:
-                    self.request_interruption()
+                self._mute_transition()
+
+    def set_physical_muted(self, muted: bool) -> None:
+        with self.privacy.lock:
+            if self.privacy.set_physical_muted(muted):
+                self._mute_transition()
+
+    def _mute_transition(self):
+        self.activation_controller.reset()
+        muted = self.privacy.muted
+        shutting_down = (self.__dict__.get("_closed", False)
+                         or self.__dict__.get("state") == AssistantState.SHUTTING_DOWN)
+        if not shutting_down:
+            self.set_state(AssistantState.MUTED if muted else AssistantState.IDLE)
+        print("[PRIVACY] Software microphone mute: " + ("ON" if muted else "OFF"), flush=True)
+        if muted:
+            self.request_interruption()
 
     def toggle_mute(self) -> None:
         with self.privacy.lock:
@@ -265,7 +272,10 @@ class AlwaysOnAssistant:
             if self.interruption_enabled:
                 validate_transition(self.__dict__.get("state", AssistantState.IDLE), state)
             self.state = state
-            print(f"\n[STATE] {state.name}", flush=True)
+            hardware = self.__dict__.get("_hardware")
+            if hardware is not None:
+                hardware.update(state)
+            print(f"\n[STATE] {self.state.name}", flush=True)
 
     def speak(
         self,
@@ -611,7 +621,7 @@ class AlwaysOnAssistant:
         finally:
             if self.interruption_enabled:
                 self.request_interruption()
-                self.set_state(AssistantState.SHUTTING_DOWN)
+            self.set_state(AssistantState.SHUTTING_DOWN)
             self._closed = True
             self.stop_event.set()
             self.activation_controller.reset()
@@ -722,14 +732,5 @@ class AlwaysOnAssistant:
 if __name__ == "__main__":
     if os.getenv("NOVA_PERFORMANCE_LOG", "false").lower() in {"1", "true", "yes", "on"}:
         enable_performance_logging()
-    app = AlwaysOnAssistant()
-    controller = WindowsMuteHotkey if os.name == "nt" else PosixMuteConsole
-    controls = {} if os.name == "nt" else {"on_unavailable": lambda: app.set_muted(True)}
-    keys = controller(app.toggle_mute, interrupt=app.request_interruption if app.interruption_enabled else None, **controls)
-    print("[PRIVACY] " + ("Press M" if os.name == "nt" else "Type M then Enter")
-          + " in this console to toggle software microphone mute.", flush=True)
-    keys.start()
-    try:
-        app.run()
-    finally:
-        keys.stop()
+    from offline_ai_companion.core.service_runtime import run_voice
+    raise SystemExit(run_voice(AlwaysOnAssistant))

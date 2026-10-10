@@ -1,6 +1,49 @@
 # Nova development status
 
-## Current module: 12.12A — Raspberry Pi deployment preparation
+## Current module: 12.12C — Raspberry Pi controls and automatic startup
+
+Implemented optional local gpiozero/LGPIOFactory controls, pure Python mock and
+fail-closed no-op backends, configurable BCM/polarity/chip settings, debounced
+physical mute and LED updates from the existing assistant state machine.
+Physical mute participates in the same generation/cancellation gate as software
+mute. Every headless restart is muted and requires a stable physical switch
+cycle. GPIO read/write errors latch mute until restart; no recovery auto-unmute.
+
+Added headless Linux ARM64 startup without a terminal, SIGTERM cleanup, sanitized
+runtime failures and explicit non-root systemd unit rendering/installation.
+Systemd crash restarts are rate-limited; permanent configuration errors exit 78
+without retry. Transient initial audio/model readiness exits 75. Accepted passive
+work still drains, and committed SQLite operations remain intact. Nova's systemd
+stop timeout is deliberately unlimited to preserve draining; a stalled shutdown
+requires operator diagnosis. GPIO installation uses Raspberry Pi OS distro-built
+packages through an explicitly configured system-site-enabled venv; existing
+venv package versions take precedence.
+
+The actual post-test-isolation baseline was **1,198 tests**, including four fixes
+beyond the user-reported 1,194. Added **80** GPIO, service and headless preflight
+cases. Focused initial GPIO/mute/interruption/deployment suite: **171 passed**;
+final GPIO/service/preflight suite: **150 passed**. All eight Bash scripts passed
+individual syntax checks. Final full regression suite: **1,278 passed in 114.53
+seconds**. All 1,198 baseline tests are preserved.
+
+Created: `core/hardware.py`, `core/service_runtime.py`, `core/systemd_units.py`,
+`deployment/raspberry-pi/setup-hardware.sh`, `install-service.sh`,
+`systemd/nova.service.in`, `systemd/nova-ollama.service.in`,
+`tests/integration/test_gpio_controls.py` and `tests/unit/test_systemd_units.py`.
+Modified: `core/privacy.py`, `core/pi_deployment.py`,
+`scripts/always_on_assistant.py`, Pi `nova.env.example`, `.gitattributes`,
+`README.md`, `.gitignore`, `tests/unit/test_pi_deployment.py` and this document.
+Core paths are under `src/offline_ai_companion/`.
+
+Linux unit templates were rendered and their policies tested on Windows;
+`systemd-analyze verify` is mandatory in the target installation script, and has
+not been executed here. No physical GPIO, Linux audio, systemd boot/recovery or
+ARM64 inference success is claimed. Wiring, package/chip compatibility, electrical
+cutoff limitations and physical validation are documented in the
+[Pi deployment guide](../deployment/raspberry-pi/README.md). Multi-hour physical
+reliability remains deferred. No subsequent module was started.
+
+## Previous module: 12.12A — Raspberry Pi deployment preparation
 
 Added a separate Linux ARM64 profile, explicit provisioning scripts, local
 foreground Ollama startup, metadata-only preflight and guarded assistant launcher.

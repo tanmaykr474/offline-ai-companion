@@ -8,6 +8,8 @@ class SoftwareMute:
     def __init__(self, muted=False):
         self.lock = RLock()
         self.muted = muted
+        self.software_muted = muted
+        self.physical_muted = False
         self.generation = 0
         self.cancel = Event()
         if muted:
@@ -18,6 +20,16 @@ class SoftwareMute:
             return self.generation, self.cancel
 
     def set_muted(self, muted):
+        with self.lock:
+            self.software_muted = bool(muted)
+            return self._transition(self.software_muted or self.physical_muted)
+
+    def set_physical_muted(self, muted):
+        with self.lock:
+            self.physical_muted = bool(muted)
+            return self._transition(self.software_muted or self.physical_muted)
+
+    def _transition(self, muted):
         with self.lock:
             if self.muted == muted:
                 return False

@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1200" viewBox="0 0 2000 1200">
+<rect width="2000" height="1200" fill="white"/>
+<text x="40" y="59.4" font-family="Arial, sans-serif" font-size="40" fill="#10263A" font-weight="700">NOVA  /  Repository architecture</text>
+<text x="40" y="103.5" font-family="Arial, sans-serif" font-size="25" fill="#526879" font-weight="400">Implemented modules, optional branches and unverified physical deployment</text>
+<rect x="350" y="145" width="1270" height="855" fill="#F7FBFC" stroke="#8FAFB5" stroke-width="2"/>
+<text x="375" y="186.5" font-family="Arial, sans-serif" font-size="25" fill="#007F86" font-weight="700">LOCAL DEVICE  /  Windows prototype or Linux ARM64 target</text>
+<text x="40" y="185.64" font-family="Arial, sans-serif" font-size="24" fill="#526879" font-weight="700">HARDWARE</text>
+<rect x="1660" y="145" width="300" height="855" fill="#FFFAF3" stroke="#D6B98D" stroke-width="2" stroke-dasharray="10 6"/>
+<text x="1680" y="189.78" font-family="Arial, sans-serif" font-size="23" fill="#A35B0B" font-weight="700">OPTIONAL INTERNET</text>
+<rect x="40" y="240" width="260" height="140" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="56" y="276.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">Microphone</text>
+<text x="56" y="310.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">PortAudio input</text>
+<text x="56" y="340.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">16 kHz mono</text>
+<rect x="390" y="240" width="320" height="140" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="406" y="276.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">Capture + RMS VAD</text>
+<text x="406" y="310.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Bounded queue + pre-roll</text>
+<text x="406" y="340.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">PCM16 session WAV</text>
+<rect x="770" y="240" width="320" height="140" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="786" y="276.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">Whisper STT</text>
+<text x="786" y="310.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Local whisper.cpp</text>
+<text x="786" y="340.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">tiny.en default</text>
+<rect x="1150" y="240" width="420" height="140" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="1166" y="276.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">Activation + filtering</text>
+<text x="1166" y="310.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Transcript-prefix Nova / hey Nova</text>
+<text x="1166" y="340.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">One 8-second follow-up</text>
+<polyline points="300,310 390,310" fill="none" stroke="#007F86" stroke-width="3"/>
+<polygon points="390,310 376.0,303.0 376.0,317.0" fill="#007F86"/>
+<polyline points="710,310 770,310" fill="none" stroke="#007F86" stroke-width="3"/>
+<polygon points="770,310 756.0,303.0 756.0,317.0" fill="#007F86"/>
+<text x="716" y="297.34" font-family="Arial, sans-serif" font-size="19" fill="#007F86" font-weight="400">WAV</text>
+<polyline points="1090,310 1150,310" fill="none" stroke="#007F86" stroke-width="3"/>
+<polygon points="1150,310 1136.0,303.0 1136.0,317.0" fill="#007F86"/>
+<text x="1096" y="297.34" font-family="Arial, sans-serif" font-size="19" fill="#007F86" font-weight="400">text</text>
+<rect x="40" y="470" width="260" height="140" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="56" y="506.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">Speaker</text>
+<text x="56" y="540.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Local WAV playback</text>
+<text x="56" y="570.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">sounddevice</text>
+<rect x="390" y="470" width="320" height="140" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="406" y="506.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">Piper TTS</text>
+<text x="406" y="540.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Local ONNX voice</text>
+<text x="406" y="570.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Output WAV + cleanup</text>
+<rect x="770" y="470" width="320" height="140" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="786" y="506.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">Assistant + tools</text>
+<text x="786" y="540.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Recall / facts / tasks</text>
+<text x="786" y="570.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Reminders / chat routing</text>
+<rect x="1150" y="470" width="420" height="140" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="1166" y="506.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">Passive worker (opt-in)</text>
+<text x="1166" y="540.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Grounded evidence + deduplication</text>
+<text x="1166" y="570.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Unidentified-speaker observations</text>
+<polyline points="1360,380 1360,415 930,415 930,470" fill="none" stroke="#007F86" stroke-width="3"/>
+<polygon points="930,470 937.0,456.0 923.0,456.0" fill="#007F86"/>
+<text x="970" y="401.34" font-family="Arial, sans-serif" font-size="19" fill="#007F86" font-weight="400">active command</text>
+<polyline points="1450,380 1450,470" fill="none" stroke="#007F86" stroke-width="3"/>
+<polygon points="1450,470 1457.0,456.0 1443.0,456.0" fill="#007F86"/>
+<text x="1460" y="428.34" font-family="Arial, sans-serif" font-size="19" fill="#007F86" font-weight="400">background</text>
+<polyline points="770,540 710,540" fill="none" stroke="#007F86" stroke-width="3"/>
+<polygon points="710,540 724.0,547.0 724.0,533.0" fill="#007F86"/>
+<text x="712" y="520.34" font-family="Arial, sans-serif" font-size="19" fill="#007F86" font-weight="400">answer</text>
+<polyline points="390,540 300,540" fill="none" stroke="#007F86" stroke-width="3"/>
+<polygon points="300,540 314.0,547.0 314.0,533.0" fill="#007F86"/>
+<rect x="1680" y="470" width="260" height="180" fill="#FFF0DB" stroke="#CADADD" stroke-width="2"/>
+<text x="1696" y="506.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">Weather / news</text>
+<text x="1696" y="540.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Fixed HTTPS providers</text>
+<text x="1696" y="570.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Open-Meteo / NewsAPI</text>
+<text x="1696" y="600.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">No memory or history</text>
+<text x="1696" y="630.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">OFF by default</text>
+<polyline points="1090,505 1120,505 1120,445 1640,445 1640,530 1680,530" fill="none" stroke="#A35B0B" stroke-width="3" stroke-dasharray="9 7"/>
+<polygon points="1680,530 1666.0,523.0 1666.0,537.0" fill="#A35B0B"/>
+<text x="1200" y="432.34" font-family="Arial, sans-serif" font-size="19" fill="#A35B0B" font-weight="400">explicit location / configured topic only</text>
+<polyline points="1680,600 1640,600 1640,690 740,690 740,580 710,580" fill="none" stroke="#A35B0B" stroke-width="3" stroke-dasharray="9 7"/>
+<polygon points="710,580 724.0,587.0 724.0,573.0" fill="#A35B0B"/>
+<text x="1190" y="679.2" font-family="Arial, sans-serif" font-size="20" fill="#A35B0B" font-weight="400">Sanitized provider answer bypasses Ollama</text>
+<rect x="390" y="745" width="320" height="140" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="406" y="781.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">Ollama Llama3.2 1B</text>
+<text x="406" y="815.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Loopback /api/generate</text>
+<text x="406" y="845.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Local general chat + extraction</text>
+<rect x="770" y="745" width="320" height="140" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="786" y="781.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">SQLite + RAM history</text>
+<text x="786" y="815.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Facts / notes / tasks / reminders</text>
+<text x="786" y="845.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Evidence + timestamps / 10 turns</text>
+<rect x="1150" y="745" width="420" height="140" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="1166" y="781.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">Reminder scheduler</text>
+<text x="1166" y="815.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">UTC rows + delivery leases</text>
+<text x="1166" y="845.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Playback acknowledgment + retry</text>
+<polyline points="825,610 825,640 550,640 550,745" fill="none" stroke="#007F86" stroke-width="3"/>
+<polygon points="550,745 557.0,731.0 543.0,731.0" fill="#007F86"/>
+<text x="428" y="671.34" font-family="Arial, sans-serif" font-size="19" fill="#007F86" font-weight="400">local prompt</text>
+<polyline points="710,805 745,805 745,565 770,565" fill="none" stroke="#007F86" stroke-width="3"/>
+<polygon points="770,565 756.0,558.0 756.0,572.0" fill="#007F86"/>
+<text x="596" y="729.34" font-family="Arial, sans-serif" font-size="19" fill="#007F86" font-weight="400">model reply</text>
+<polyline points="975,610 975,745" fill="none" stroke="#007F86" stroke-width="3"/>
+<polygon points="975,745 982.0,731.0 968.0,731.0" fill="#007F86"/>
+<text x="985" y="719.34" font-family="Arial, sans-serif" font-size="19" fill="#007F86" font-weight="400">read / write</text>
+<polyline points="1280,610 1280,710 1050,710 1050,745" fill="none" stroke="#007F86" stroke-width="3"/>
+<polygon points="1050,745 1057.0,731.0 1043.0,731.0" fill="#007F86"/>
+<text x="1100" y="731.34" font-family="Arial, sans-serif" font-size="19" fill="#007F86" font-weight="400">validated writes</text>
+<polyline points="1150,815 1090,815" fill="none" stroke="#007F86" stroke-width="3"/>
+<polygon points="1090,815 1104.0,822.0 1104.0,808.0" fill="#007F86"/>
+<text x="1110" y="866.34" font-family="Arial, sans-serif" font-size="19" fill="#007F86" font-weight="400">claim / complete</text>
+<polyline points="1360,885 1360,950 740,950 740,670 550,670 550,610" fill="none" stroke="#007F86" stroke-width="3" stroke-dasharray="9 7"/>
+<polygon points="550,610 543.0,624.0 557.0,624.0" fill="#007F86"/>
+<text x="770" y="974.34" font-family="Arial, sans-serif" font-size="19" fill="#007F86" font-weight="400">notify main loop; reminder playback through Piper</text>
+<polyline points="1150,580 1120,580 1120,725 720,725 720,850 710,850" fill="none" stroke="#007F86" stroke-width="3" stroke-dasharray="9 7"/>
+<polygon points="710,850 724.0,857.0 724.0,843.0" fill="#007F86"/>
+<text x="750" y="747.34" font-family="Arial, sans-serif" font-size="19" fill="#007F86" font-weight="400">optional local extraction</text>
+<rect x="40" y="745" width="260" height="140" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="56" y="781.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">Mute controls</text>
+<text x="56" y="815.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">GPIO switch / console</text>
+<text x="56" y="845.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">BCM23 default</text>
+<rect x="40" y="920" width="260" height="80" fill="#EAF3F4" stroke="#CADADD" stroke-width="2"/>
+<text x="56" y="956.36" font-family="Arial, sans-serif" font-size="26" fill="#18384C" font-weight="700">RGB LED</text>
+<text x="56" y="990.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">R17 / G27 / B22</text>
+<polyline points="300,800 335,800 335,1030 460,1030" fill="none" stroke="#10263A" stroke-width="3" stroke-dasharray="9 7"/>
+<polygon points="460,1030 446.0,1023.0 446.0,1037.0" fill="#10263A"/>
+<polyline points="770,1030 335,1030 335,960 300,960" fill="none" stroke="#10263A" stroke-width="3" stroke-dasharray="9 7"/>
+<polygon points="300,960 314.0,967.0 314.0,953.0" fill="#10263A"/>
+<rect x="390" y="1015" width="1550" height="135" fill="#EAF1F8" stroke="#8CA4BB" stroke-width="2"/>
+<text x="410" y="1053.64" font-family="Arial, sans-serif" font-size="24" fill="#10263A" font-weight="700">PRIVACY + CONTROL</text>
+<text x="410" y="1089.78" font-family="Arial, sans-serif" font-size="23" fill="#18384C" font-weight="400">Mute generations deny new/stale input. Accepted work can drain. GPIO faults latch mute until restart.</text>
+<text x="410" y="1125.92" font-family="Arial, sans-serif" font-size="22" fill="#18384C" font-weight="400">Half-duplex capture/playback. Owned WAV cleanup. Plaintext SQLite. No electrical mic cutoff or voice authentication.</text>
+<polyline points="570,1015 570,995 370,995 370,355 390,355" fill="none" stroke="#10263A" stroke-width="3" stroke-dasharray="9 7"/>
+<polygon points="390,355 376.0,348.0 376.0,362.0" fill="#10263A"/>
+<text x="40" y="1180.92" font-family="Arial, sans-serif" font-size="22" fill="#526879" font-weight="400">Solid teal: local data     Dashed navy: control/state     Dashed amber: optional network     Pi hardware / boot / inference: unverified</text>
+</svg>

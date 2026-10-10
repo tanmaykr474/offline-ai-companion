@@ -368,3 +368,58 @@ def test_noninteractive_start_refuses_even_valid_preflight(installation, monkeyp
     runner = Mock()
     assert pi.main(["--env-file", str(env_file), "--start"], checker=lambda *a, **k: {"ok": True, "checks": []}, runner=runner) == 1
     runner.assert_not_called()
+
+
+def test_headless_preflight_validates_dependencies_without_opening_gpio(installation, monkeypatch):
+    from offline_ai_companion.core import hardware
+    _, env_file, run = installation
+    with env_file.open("a") as stream:
+        stream.write("\nNOVA_HEADLESS=true\nNOVA_GPIO_BACKEND=lgpio\n")
+    monkeypatch.setattr(hardware, "validate_gpio_dependencies", lambda: True)
+    opener = Mock(side_effect=AssertionError("Preflight must not acquire GPIO"))
+    monkeypatch.setattr(hardware, "LGPIOBackend", opener)
+    assert run()["ok"]
+    opener.assert_not_called()
+
+
+@pytest.mark.parametrize("backend,microphone,expected", [("none", "false", "headless_gpio_config"),
+    ("mock", "false", "headless_gpio_config"), ("lgpio", "true", "muted_service_startup")])
+def test_headless_preflight_rejects_unsafe_controls(installation, monkeypatch, backend, microphone, expected):
+    from offline_ai_companion.core import hardware
+    _, env_file, run = installation
+    with env_file.open("a") as stream:
+        stream.write(f"\nNOVA_HEADLESS=true\nNOVA_GPIO_BACKEND={backend}\nMIC_ENABLED={microphone}\n")
+    monkeypatch.setattr(hardware, "validate_gpio_dependencies", lambda: True)
+    report = run()
+    assert not report["ok"] and statuses(report)[expected] == "failed"
+
+
+def test_headless_start_does_not_require_stdin(installation, monkeypatch):
+    _, env_file, _ = installation
+    with env_file.open("a") as stream:
+        stream.write("\nNOVA_GPIO_BACKEND=lgpio\n")
+    import runpy
+    monkeypatch.setattr(runpy, "run_path", lambda _: {"build_report": Mock()})
+    monkeypatch.setattr(pi.os, "environ", dict(os.environ))
+    monkeypatch.setattr(pi.os, "chdir", Mock())
+    monkeypatch.setattr(pi.os, "umask", Mock())
+    monkeypatch.setattr(pi.sys, "stdin", SimpleNamespace(isatty=lambda: False))
+    runner = Mock()
+    assert pi.main(["--env-file", str(env_file), "--start", "--headless"],
+                   checker=lambda *a, **k: {"ok": True, "checks": []}, runner=runner) == 0
+    runner.assert_called_once()
+
+
+@pytest.mark.parametrize("failure,code", [("configuration", 78), ("gpio_dependencies", 78),
+    ("whisper_model_path", 78), ("audio_formats", 75), ("ollama_model_available", 75)])
+def test_headless_start_exit_codes_distinguish_permanent_and_temporary(installation, monkeypatch, failure, code):
+    _, env_file, _ = installation
+    with env_file.open("a") as stream:
+        stream.write("\nNOVA_GPIO_BACKEND=lgpio\n")
+    import runpy
+    monkeypatch.setattr(runpy, "run_path", lambda _: {"build_report": Mock()})
+    monkeypatch.setattr(pi.os, "environ", dict(os.environ))
+    runner = Mock()
+    assert pi.main(["--env-file", str(env_file), "--start", "--headless"],
+                   checker=lambda *a, **k: {"ok": False, "checks": [{"check": failure, "status": "failed"}]}, runner=runner) == code
+    runner.assert_not_called()

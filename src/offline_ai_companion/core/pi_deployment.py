@@ -79,6 +79,11 @@ def preflight(root, env_file, environment=None, *, system=None, machine=None,
         check("configuration", lambda: False)
         return {"scope": "preflight_not_physical_validation", "checks": checks, "ok": False}
     check("pi_profile", lambda: env.get("NOVA_PROFILE") == "raspberry-pi")
+    if env.get("NOVA_HEADLESS", "false").lower() == "true":
+        from .hardware import HardwareConfig, boolean, validate_gpio_dependencies
+        check("headless_gpio_config", lambda: HardwareConfig.from_env(env).backend == "lgpio")
+        check("gpio_dependencies", validate_gpio_dependencies)
+        check("muted_service_startup", lambda: env.get("MIC_ENABLED", "true").lower() == "false")
     for name, low, high in (("WHISPER_THREADS", 1, 16), ("NOVA_AUDIO_QUEUE_SIZE", 1, 1000),
                             ("NOVA_OLLAMA_NUM_CTX", 128, 8192), ("NOVA_OLLAMA_NUM_THREAD", 1, 16)):
         check(name.lower(), lambda n=name, lo=low, hi=high: optional_integer(n, lo, hi, env) is not None)
@@ -132,6 +137,7 @@ def main(argv=None, *, checker=preflight, runner=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--env-file", type=Path)
     parser.add_argument("--start", action="store_true", help="Start in this foreground terminal after preflight.")
+    parser.add_argument("--headless", action="store_true", help="Use required physical GPIO controls without a terminal.")
     parser.add_argument("--audio", action="store_true", help="Check device formats without recording.")
     parser.add_argument("--ollama", action="store_true", help="Check local model inventory without inference.")
     args = parser.parse_args(argv)
@@ -139,6 +145,8 @@ def main(argv=None, *, checker=preflight, runner=None):
     env_file = args.env_file or root / "deployment/raspberry-pi/nova.env"
     try:
         env = environment_file(env_file)
+        if args.headless:
+            env["NOVA_HEADLESS"] = "true"
         # Import configuration only after selecting this environment; no Windows .env leakage.
         os.environ.update(env)
         if args.audio or args.start:
@@ -150,11 +158,24 @@ def main(argv=None, *, checker=preflight, runner=None):
                          model_probe=ollama_available if args.ollama or args.start else None)
     except Exception:
         report = {"ok": False, "checks": [{"check": "configuration", "status": "failed"}]}
-    if args.start and not sys.stdin.isatty():
+    headless = env.get("NOVA_HEADLESS", "false").lower() == "true" if "env" in locals() else False
+    if headless:
+        from .hardware import HardwareConfig, boolean
+        try:
+            hardware = HardwareConfig.from_env(env)
+            valid = hardware.backend == "lgpio" and boolean(env, "NOVA_HEADLESS", False)
+        except Exception:
+            valid = False
+        report["checks"].append({"check": "headless_hardware_configuration", "status": "ok" if valid else "failed"})
+        report["ok"] = report["ok"] and valid
+    if args.start and not headless and not sys.stdin.isatty():
         report["ok"] = False
         report["checks"].append({"check": "interactive_mute_controls", "status": "failed"})
     print(json.dumps(report, indent=2))
     if not report["ok"]:
+        if args.start and headless:
+            failures = {item["check"] for item in report["checks"] if item["status"] != "ok"}
+            return 75 if failures <= {"audio_formats", "ollama_model_available"} else 78
         return 1
     if args.start:
         os.umask(0o077)

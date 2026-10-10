@@ -1,0 +1,41 @@
+[
+  {
+    "check": "zip_crc",
+    "ok": true
+  },
+  {
+    "check": "all_xml_parse",
+    "ok": true,
+    "count": 85
+  },
+  {
+    "check": "12_slides",
+    "ok": true
+  },
+  {
+    "check": "12_notes",
+    "ok": true
+  },
+  {
+    "check": "architecture_png_embedded",
+    "ok": true
+  },
+  {
+    "check": "all_shapes_within_canvas",
+    "ok": true
+  },
+  {
+    "check": "jury_questions_at_least_30",
+    "ok": true,
+    "count": 48
+  },
+  {
+    "check": "diagram_svg_and_png_parse",
+    "ok": true
+  },
+  {
+    "check": "source_and_tests_syntax_parsed",
+    "ok": true,
+    "count": 148
+  }
+]

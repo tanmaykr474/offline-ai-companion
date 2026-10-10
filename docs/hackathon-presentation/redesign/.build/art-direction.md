@@ -1,0 +1,1 @@
+Design: midnight navy, warm ivory, mint, Arial. 12 slides. Abstract voice artwork generated with built-in ImageGen. Prompt: widescreen dark navy background with a translucent mint/blue sculptural sound-wave loop at right, clean left negative space, no text/device/logo. Native editable architecture and LED state diagram. Original deck retained.

@@ -58,6 +58,7 @@ dist/
 /deployment/raspberry-pi/ollama/
 /deployment/raspberry-pi/.ollama-stage.*/
 /deployment/raspberry-pi/.model-stage.*/
+/deployment/raspberry-pi/.service-stage.*/
 /deployment/raspberry-pi/model-checksums.txt
 
 /sample-data/audio/*.wav

@@ -1,0 +1,24 @@
+[Unit]
+Description=Nova loopback-only local Ollama
+After=local-fs.target
+StartLimitIntervalSec=300
+StartLimitBurst=3
+
+[Service]
+Type=exec
+User=@USER@
+WorkingDirectory=@ROOT@
+UMask=0077
+ExecStart=/bin/bash @ROOT@/deployment/raspberry-pi/ollama-serve.sh
+Restart=on-failure
+RestartSec=10
+KillMode=control-group
+TimeoutStopSec=60
+NoNewPrivileges=true
+ProtectSystem=full
+StandardInput=null
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
