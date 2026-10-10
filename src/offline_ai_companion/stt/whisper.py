@@ -92,4 +92,7 @@ class WhisperSTT:
                 "Cannot start Whisper executable."
             ) from None
 
-        return result.stdout.strip()
+        # whisper.cpp writes acoustic segments on separate lines. A segment
+        # break is not a sentence boundary and can split a supported statement.
+        # Preserve punctuation (including questions/quotes), join only whitespace.
+        return " ".join(result.stdout.split())

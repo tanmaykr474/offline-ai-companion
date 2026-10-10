@@ -122,6 +122,51 @@ def test_passive_recording_to_wake_recall_and_playback(pipeline, speech, questio
     llm.generate.assert_not_called()
 
 
+def test_hello_nova_is_active_not_a_passive_memory(pipeline):
+    app, _, _, _ = pipeline
+    scripted_run(app, ["Hello Nova"])
+    app.tts.synthesize.assert_called_once()
+    assert app.assistant.passive_memory_repository.list_memories() == []
+
+
+def test_transcript_display_is_disabled_by_default(pipeline, monkeypatch, capsys):
+    monkeypatch.delenv('NOVA_TRANSCRIPT_DEBUG', raising=False)
+    pipeline[0].handle_transcript('Nova, hello')
+    assert '[STT TRANSCRIPT]' not in capsys.readouterr().out
+
+
+def test_opt_in_transcript_display_shows_original_stt(pipeline, monkeypatch, capsys):
+    monkeypatch.setenv('NOVA_TRANSCRIPT_DEBUG', 'true')
+    pipeline[0].handle_transcript('Nova, hello [MUSIC]')
+    assert "[STT TRANSCRIPT] 'Nova, hello [MUSIC]'" in capsys.readouterr().out
+
+
+def test_opt_in_transcript_display_redacts_credentials(pipeline, monkeypatch, capsys):
+    monkeypatch.setenv('NOVA_TRANSCRIPT_DEBUG', 'true')
+    pipeline[0].handle_transcript('My password is DemoOnly123.')
+    output = capsys.readouterr().out
+    assert 'DemoOnly123' not in output
+    assert '[CREDENTIAL CONTENT OMITTED]' in output
+
+
+@pytest.mark.parametrize('boundary', ['muted', 'stale', 'shutdown'])
+def test_transcript_display_respects_privacy_and_lifecycle(pipeline, monkeypatch, capsys, boundary):
+    app = pipeline[0]
+    monkeypatch.setenv('NOVA_TRANSCRIPT_DEBUG', 'true')
+    generation, _ = app.privacy.snapshot()
+    if boundary == 'muted':
+        app.set_muted(True)
+    elif boundary == 'stale':
+        app.set_muted(True)
+        app.set_muted(False)
+    else:
+        app.stop_event.set()
+    app.handle_transcript('Nova, private example', generation=generation)
+    output = capsys.readouterr().out
+    assert '[STT TRANSCRIPT]' not in output
+    assert 'private example' not in output
+
+
 def test_accuracy_duplicates_negation_conflict_unknown_and_fact_priority(pipeline):
     app, facts, _, llm = pipeline
     texts = ["I was born in Bihar.", "I was born in Bihar.",

@@ -384,6 +384,15 @@ class AlwaysOnAssistant:
         with self.privacy.guard(generation) as allowed:
             if not allowed:
                 return
+            if (isinstance(transcript, str)
+                    and os.getenv("NOVA_TRANSCRIPT_DEBUG", "false").lower()
+                    in {"true", "1", "yes", "on"}):
+                # Explicit local diagnostics only. Check the entire field for
+                # secrets before bounding/escaping output, while mute is locked.
+                visible = model_text(transcript)
+                if len(visible) > 1500:
+                    visible = visible[:1500] + " [TRUNCATED]"
+                print(f"[STT TRANSCRIPT] {visible!r}", flush=True)
         if not is_usable_transcript(transcript):
             print(
                 "[STT] Ignored invalid or non-speech transcription.",

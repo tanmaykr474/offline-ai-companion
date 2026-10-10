@@ -83,3 +83,33 @@ def test_transcription_timeout(mock_run, stt_files):
 
     with pytest.raises(RuntimeError, match="timed out"):
         stt.transcribe(audio)
+
+
+@pytest.mark.parametrize("speech,expected", [
+    ("I love playing\n cricket.\n", "I love playing cricket."),
+    ("My favorite food\r\nis biryani.", "My favorite food is biryani."),
+    ('Someone said, "I love\ncricket."', 'Someone said, "I love cricket."'),
+    ("I do not\nwork as a developer.", "I do not work as a developer."),
+    ("Do I love\nplaying cricket?", "Do I love playing cricket?"),
+])
+def test_acoustic_segment_lines_preserve_statement_meaning(stt_files, speech, expected):
+    with patch("subprocess.run") as run:
+        run.return_value.stdout = speech
+        assert WhisperSTT(*stt_files[:2]).transcribe(stt_files[2]) == expected
+
+
+def test_segmented_transcription_reaches_grounded_memory(stt_files, tmp_path):
+    from unittest.mock import Mock
+    from offline_ai_companion.memory.database import Database
+    from offline_ai_companion.memory.passive_repository import PassiveMemoryRepository
+    from offline_ai_companion.memory.passive_processor import PassiveMemoryProcessor
+
+    repo = PassiveMemoryRepository(Database(tmp_path / "isolated.db"))
+    llm = Mock()
+    processor = PassiveMemoryProcessor(repo, llm)
+    with patch("subprocess.run") as run:
+        run.return_value.stdout = "I love playing\ncricket."
+        speech = WhisperSTT(*stt_files[:2]).transcribe(stt_files[2])
+    assert processor.process(speech) == 1
+    assert repo.list_memories()[0].content == "Loves playing cricket"
+    llm.generate.assert_not_called()

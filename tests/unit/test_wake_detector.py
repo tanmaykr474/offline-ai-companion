@@ -133,3 +133,29 @@ def Nova(detector):
 
     assert result.wake_phrase == "hey Nova"
     assert result.command == "tell me something"
+
+
+@pytest.mark.parametrize("speech,command", [
+    ("Hello Nova", "hello"), ("Hi Nova!", "hello"),
+    ("Hello   Nova, what is my favorite food?", "what is my favorite food?"),
+    ("HI NOVA: show my notes", "show my notes"),
+])
+def test_direct_greetings_activate_without_passive_processing(detector, speech, command):
+    result = detector.detect(speech)
+    assert result.activated
+    assert result.command == command
+
+
+@pytest.mark.parametrize("speech", [
+    "Someone said hello Nova", "Hello Novai", "Hello Nova Scotia",
+])
+def test_greeting_boundaries(detector, speech):
+    result = detector.detect(speech)
+    # A literal direct greeting followed by Scotia is a command; unrelated
+    # occurrences and partial names must never become wake activations.
+    assert result.activated == (speech == "Hello Nova Scotia")
+
+
+def test_greeting_aliases_respect_custom_wake_configuration():
+    detector = WakeDetector(assistant_name="Nova", wake_phrases=("activate assistant",))
+    assert not detector.detect("Hello Nova").activated

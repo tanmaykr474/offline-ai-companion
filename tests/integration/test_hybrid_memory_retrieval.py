@@ -63,6 +63,37 @@ def test_multi_fact_confirmed_priority(env):
     llm.generate.assert_not_called()
 
 
+@pytest.mark.parametrize('question', [
+    'What sport I love playing?',
+    'Which sports I love to play?',
+    'Do you remember what sport I love playing?',
+    'Do you know which sport do I love playing?',
+    'Can you tell me what sport I love playing?',
+    'Tell me what sport do I love playing?',
+])
+def test_spoken_activity_recall_variants(env, question):
+    assistant, facts, passive, processor, llm = env
+    assert processor.process('I love playing cricket.') == 1
+    before = passive.list_memories()
+    answer = assistant.process(question)
+    assert 'cricket' in answer
+    assert 'unidentified' in answer
+    assert passive.list_memories() == before
+    assert facts.list_facts() == {}
+    llm.generate.assert_not_called()
+
+
+@pytest.mark.parametrize('question', [
+    'Do you remember what sport I like playing?',
+    'Do you remember what sport I love playing yesterday?',
+    'Do you remember what sport I do not love playing?',
+])
+def test_activity_wrappers_do_not_drop_meaningful_qualifiers(env, question):
+    assistant, _, _, processor, _ = env
+    processor.process('I love playing cricket.')
+    assert 'cricket' not in assistant.process(question).lower()
+
+
 @pytest.mark.parametrize('question', ['What is my profession?', 'Do you remember my preferred food?'])
 def test_unknown_is_honest(env, question):
     assistant, _, _, _, llm = env

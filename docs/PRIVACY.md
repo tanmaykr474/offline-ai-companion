@@ -77,7 +77,15 @@ For manual diagnostic scripts, `NOVA_PRIVATE_DEBUG=true` explicitly enables
 personal transcript/answer/memory output. Recognized credentials are still
 redacted. This flag can expose personal information to terminal history, screen
 observers or external log collectors; leave it unset for normal use. It does not
-enable raw-content output in the always-on runtime. The interactive text UI
+enable raw-content output in the always-on runtime. A separate explicit
+`NOVA_TRANSCRIPT_DEBUG=true` setting displays original Whisper transcriptions
+in the always-on console for microphone troubleshooting. It is disabled by
+default, omits recognized credential fields, escapes control characters and
+bounds each line. Muted, stale and shutdown-rejected input is not displayed.
+Personal speech can still be visible to observers or console log collectors.
+Use `scripts/start_clean_test.ps1 -ShowTranscript` for a temporary diagnostic
+session, then stop it to restore the previous setting. This does not enable
+response logging or save extra memories. The interactive text UI
 (`assistant_test.py`, `llm_test.py`) intentionally displays requested answers,
 and the terminal itself echoes typed input; do not type secrets there.
 

@@ -43,6 +43,16 @@ class WakeDetector:
                 "At least one wake phrase is required."
             )
 
+        # Natural greetings address the assistant directly. Add aliases only
+        # when its bare name is enabled, preserving custom wake-only setups.
+        self._greeting_phrases = set()
+        if self.assistant_name.casefold() in phrases:
+            self._greeting_phrases = {
+                f"hello {self.assistant_name.casefold()}",
+                f"hi {self.assistant_name.casefold()}",
+            }
+            phrases.update(self._greeting_phrases)
+
         # Check longer phrases first.
         self.wake_phrases = tuple(
             sorted(
@@ -86,6 +96,8 @@ class WakeDetector:
             command = transcript[
                 match.end():
             ].strip()
+            if not command and phrase in self._greeting_phrases:
+                command = "hello"
 
             return WakeDetectionResult(
                 activated=True,

@@ -44,6 +44,15 @@ class PassiveMemoryRetriever:
     @timed("memory_retrieval")
     def recall(self, query: str) -> RecallResult | None:
         question = re.sub(r"^(?:hey\s+)?nova[,\s]+", "", query.strip(), flags=re.I)
+        # Direct recall wrappers do not change the requested relation. Keep
+        # question words and qualifiers rather than dropping unmatched tokens.
+        wrapper = re.fullmatch(
+            r"(?:do you (?:know|remember)|can you tell me|tell me)\s+"
+            r"(?P<question>(?:what|which|where)\b.+)",
+            question, flags=re.I,
+        )
+        if wrapper:
+            question = wrapper["question"]
         normalized = self.normalize(question)
         fact = self.parser.parse(question)
         topic = None
@@ -68,12 +77,12 @@ class PassiveMemoryRetriever:
             topic = "language" if topic == "programming language" else topic
             key = "user.favorite_" + topic.replace(" ", "_")
             label = "favorite " + favorite[1]
-        if normalized in {"where was i born", "where am i born", "what is my birthplace", "what's my birthplace", "tell me where i was born"}:
+        if normalized in {"where was i born", "where i was born", "where am i born", "what is my birthplace", "what's my birthplace", "tell me where i was born"}:
             relation, key, label = "birthplace", "user.birthplace", "birthplace"
         if normalized in {"what do i do for work", "what is my occupation", "what's my occupation", "what is my job", "what do i work as"}:
             relation, key, label = "occupation", "user.job", "occupation"
         activity = re.fullmatch(
-            r"(?:what|which) (?:(?:sport|sports|activities|activity) )?do i (love|enjoy|like|prefer)(?: (?:doing|playing|to do|to play))?",
+            r"(?:what|which) (?:(?:sport|sports|activities|activity) )?(?:do )?i (love|enjoy|like|prefer)(?: (?:doing|playing|to do|to play))?",
             normalized,
         )
         if activity:

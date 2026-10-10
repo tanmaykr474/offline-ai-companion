@@ -421,7 +421,7 @@ JSON:"""
 
         if candidates:
             print(
-                "[MEMORY] Deterministic preference extraction.",
+                "[MEMORY] Deterministic observation extraction.",
                 flush=True,
             )
         else:
@@ -430,13 +430,8 @@ JSON:"""
                 capture_time_utc,
             )
 
-        print(
-            "[MEMORY DEBUG] Proposed memories: "
-            f"{len(candidates)}",
-            flush=True,
-        )
-
         saved = 0
+        rejected = 0
         seen = set()
 
         for item in candidates:
@@ -445,10 +440,7 @@ JSON:"""
                 transcript,
                 captured_at,
             ):
-                print(
-                    "[MEMORY DEBUG] Rejected ungrounded memory.",
-                    flush=True,
-                )
+                rejected += 1
                 continue
 
             if item["category"] == "event":
@@ -486,4 +478,14 @@ JSON:"""
             if inserted:
                 saved += 1
 
+        print(
+            f"[MEMORY] Candidates={len(candidates)} rejected={rejected} saved={saved}.",
+            flush=True,
+        )
+        if candidates and rejected == len(candidates):
+            print(
+                "[MEMORY] No supported observation in extraction results; "
+                "nothing stored (normal for unrelated speech or STT noise).",
+                flush=True,
+            )
         return saved

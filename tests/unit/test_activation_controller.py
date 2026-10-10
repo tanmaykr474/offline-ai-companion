@@ -48,6 +48,12 @@ def test_background_speech_is_passive(
     )
 
 
+def test_hello_nova_routes_active_greeting(controller, start_time):
+    decision = controller.route("Hello Nova", now=start_time)
+    assert decision.action == "active"
+    assert decision.text == "hello"
+
+
 def test_wake_phrase_with_command(
     controller,
     start_time,

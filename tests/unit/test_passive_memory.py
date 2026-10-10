@@ -268,3 +268,15 @@ def test_passive_timeout_is_not_retried_or_saved(environment):
     client.post.assert_called_once()
     assert client.post.call_args.kwargs["timeout"] == processor.llm.timeout
     assert repository.list_memories() == []
+
+
+def test_rejected_candidate_summary_excludes_private_speech(environment, capsys):
+    _, llm, processor = environment
+    speech = "I have a confidential presentation tomorrow"
+    llm.generate.return_value = llm_response([memory_item(content="Invented content")])
+    assert processor.process(speech) == 0
+    output = capsys.readouterr().out
+    assert "Candidates=1 rejected=1 saved=0" in output
+    assert "No supported observation" in output
+    assert speech not in output
+    assert "Invented content" not in output
